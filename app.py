@@ -27,7 +27,7 @@ st.set_page_config(
 )
 
 # ══════════════════════════════════════════════════════════════════════════════
-# CSS — refined dark-navy / gold actuarial theme
+# CSS 
 # ══════════════════════════════════════════════════════════════════════════════
 CSS = """
 <style>
@@ -280,7 +280,7 @@ st.markdown(CSS, unsafe_allow_html=True)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# SCORING ENGINE  (self-contained — no pickle dependency)
+# SCORING ENGINE  
 # ══════════════════════════════════════════════════════════════════════════════
 
 LOC_OFFSET = {
@@ -346,7 +346,7 @@ def score_policy(
               1 if months_since_water < 36 else 0)
     loc_off = LOC_OFFSET.get(location_zone, 0.0)
 
-    # ── Tier 1 η ─────────────────────────────────────────────────────────────
+    # ── Tier 1 ─────────────────────────────────────────────────────────────
     eta_t1 = (
         8.10
         + 0.027 * roof_age
@@ -359,7 +359,7 @@ def score_policy(
         + loc_off
     )
 
-    # ── Tier 2 incremental η ─────────────────────────────────────────────────
+    # ── Tier 2 ─────────────────────────────────────────────────
     eta_t2_incr = (
         0.013  * fire_hydrant_dist
         + 0.008 * crime_idx  / 20
@@ -396,7 +396,7 @@ def score_policy(
         "ix_roof_hail":        ix_rf_hail,
     }
 
-    # ── Tier 3 GAM δ ─────────────────────────────────────────────────────────
+    # ── Tier 3 GAM  ─────────────────────────────────────────────────────────
     gam_roof_nl  = 0.004 * max(roof_age  - 15, 0) ** 2 / 100
     gam_wf_nl    = 0.011 * (wildfire_score / 100) ** 2
     gam_flood_nl = 0.007 * np.log1p(flood_depth_in)
@@ -448,7 +448,7 @@ def score_policy(
     lr      = lr_map.get(decision)
     premium = round(loss_final / lr, -1) if lr else None
 
-    # ── Feature contributions (score-point scale) ─────────────────────────────
+    # ── Feature contributions ─────────────────────────────
     t1_contrib = {
         "Roof Vulnerability":   (0.027 * roof_age + 0.050 * mat_r) * scale,
         "Home Age / Structure": (0.012 * home_age + 0.045 * cnst_r) * scale,
