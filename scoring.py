@@ -1,22 +1,3 @@
-"""
-scoring.py
-==========
-Backend scoring engine — all GLM-GAM computation lives here.
-app.py only calls score_policy() and renders the returned dict.
-
-Tier 1 — Structural Foundation (GLM, ~60% variance):
-    Roof Age, Roof Material, Home Age, Construction Type,
-    Prior Water Claim, RCV Ratio, Coverage A, Location Zone
-
-Tier 2 — Lifestyle & Secondary (GLM, +~20% incremental):
-    Prior Claims, Insurance Lapses, Pool, Trampoline, Home Business,
-    Sprinklers, Alarm, Gated, Wood Stove, Recent Reno, Pet Ownership,
-    Building Code, Hydrant Distance, ISO Class, Crime Index
-
-Tier 3 — Geographical + GAM Residual (+~12% incremental):
-    Wildfire Score/Zone, Canopy%, Flood Zone/Depth, Slope,
-    Hail Zone, Burn History, Foundation + 6 pairwise interactions
-"""
 
 import pickle
 from pathlib import Path
@@ -64,7 +45,7 @@ T3_CATALOGUE = [
      "Asphalt roof >20yr in hail zone — impact penetration severity 1.5×"),
 ]
 
-# ── Interaction condition descriptions (for UI display) ───────────────────────
+# ── Interaction condition descriptions ───────────────────────
 IX_CONDITIONS = {
     "ix_roof_wildfire":    ("Roof >20yr",        "High wildfire zone",  "Mandatory inspection"),
     "ix_water_canopy":     ("Prior water claim", "Dense canopy >60%",   "Rate +25%"),
