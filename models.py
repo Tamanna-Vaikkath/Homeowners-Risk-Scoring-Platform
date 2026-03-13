@@ -1,21 +1,4 @@
-"""
-models.py
-=========
-GLM-GAM model training pipeline.
 
-Architecture (from framework images):
-  Tier 1 GLM — Structural Foundation        → ~60% explained variance
-  Tier 2 GLM — T1 + Lifestyle variables     → +~20% incremental variance
-  Tier 3 GAM — Residual on T1+T2 GLM output → +~12% incremental variance
-
-  Final: η_final(x) = η_GLM(x) + δ_GAM(x)
-
-Outputs saved to data/models/:
-  glm_t1.pkl, glm_full.pkl, gam_residual.pkl, model_metrics.json
-
-Usage:
-    python models.py
-"""
 
 import json
 import pickle
@@ -128,7 +111,7 @@ class SimpleGAM:
 
 
 # ═════════════════════════════════════════════════════════════════════════════
-# Feature sets  (matching tier structure from framework images)
+# Feature sets  
 # ═════════════════════════════════════════════════════════════════════════════
 
 # Tier 1 — Structural Foundation
@@ -140,7 +123,7 @@ T1_FEATURES = [
     "loc_off",                         # Location zone offset
 ]
 
-# Tier 2 — Lifestyle & Secondary (T1 + these extras)
+# Tier 2 — Lifestyle & Secondary 
 T2_EXTRA = [
     "prior_claims_5yr",   # r=0.26  strongest T2 predictor
     "ins_lapses",         # r=0.18
