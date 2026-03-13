@@ -63,8 +63,6 @@ Where
 
 Core property characteristics.
 
-Explains roughly **60% of variance**.
-
 Features include:
 
 * roof age
@@ -84,8 +82,6 @@ These represent **traditional underwriting variables**.
 
 Adds behavioral risk factors.
 
-Adds roughly **+20% incremental variance**.
-
 Examples:
 
 * prior claims history
@@ -104,8 +100,6 @@ Examples:
 ## Tier 3 – Geographical + GAM Residual Layer
 
 Captures nonlinear environmental hazards.
-
-Adds roughly **+12% incremental variance**.
 
 Examples:
 
@@ -130,7 +124,7 @@ Includes interaction effects such as:
 # Project Structure
 
 ```
-Final_Risk_Scoring
+Homeowners_Risk_Scoring_Platform
 │
 ├── app.py
 ├── generate_data.py
@@ -294,10 +288,6 @@ Rated → 60%
 # Dashboard Features
 
 The Streamlit application provides:
-
-### Risk Score Gauge
-
-Visual display of policy risk level.
 
 ### Risk Contribution Waterfall
 
