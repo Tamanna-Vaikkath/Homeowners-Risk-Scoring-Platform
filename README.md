@@ -322,7 +322,7 @@ Clone the repository.
 
 ```
 git clone https://github.com/Tamanna-Vaikkath/Homeowners-Risk-Scoring-Platform
-cd Final_Risk_Scoring
+cd Homeowners_Risk_Scoring_Platform
 ```
 
 Install dependencies.
