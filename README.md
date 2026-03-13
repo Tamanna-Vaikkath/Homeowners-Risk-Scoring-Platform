@@ -436,5 +436,3 @@ Python
 # Author
 
 Tamanna Vaikkath
-
-Insurance Analytics / Machine Learning Project
