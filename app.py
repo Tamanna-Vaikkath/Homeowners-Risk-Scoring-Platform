@@ -1,4 +1,3 @@
-
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -27,7 +26,7 @@ st.set_page_config(
 )
 
 # ══════════════════════════════════════════════════════════════════════════════
-# CSS 
+# CSS — refined dark-navy / gold actuarial theme
 # ══════════════════════════════════════════════════════════════════════════════
 CSS = """
 <style>
@@ -280,7 +279,7 @@ st.markdown(CSS, unsafe_allow_html=True)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# SCORING ENGINE  
+# SCORING ENGINE  (self-contained — no pickle dependency)
 # ══════════════════════════════════════════════════════════════════════════════
 
 LOC_OFFSET = {
@@ -346,7 +345,7 @@ def score_policy(
               1 if months_since_water < 36 else 0)
     loc_off = LOC_OFFSET.get(location_zone, 0.0)
 
-    # ── Tier 1 ─────────────────────────────────────────────────────────────
+    # ── Tier 1 η ─────────────────────────────────────────────────────────────
     eta_t1 = (
         8.10
         + 0.027 * roof_age
@@ -359,7 +358,7 @@ def score_policy(
         + loc_off
     )
 
-    # ── Tier 2 ─────────────────────────────────────────────────
+    # ── Tier 2 incremental η ─────────────────────────────────────────────────
     eta_t2_incr = (
         0.013  * fire_hydrant_dist
         + 0.008 * crime_idx  / 20
@@ -396,7 +395,7 @@ def score_policy(
         "ix_roof_hail":        ix_rf_hail,
     }
 
-    # ── Tier 3 GAM  ─────────────────────────────────────────────────────────
+    # ── Tier 3 GAM δ ─────────────────────────────────────────────────────────
     gam_roof_nl  = 0.004 * max(roof_age  - 15, 0) ** 2 / 100
     gam_wf_nl    = 0.011 * (wildfire_score / 100) ** 2
     gam_flood_nl = 0.007 * np.log1p(flood_depth_in)
@@ -438,7 +437,7 @@ def score_policy(
     if s_final < 30:
         decision, desc = "Preferred", "Auto-bind eligible · Preferred tier rates · No manual review"
     elif s_final < 60:
-        decision, desc = "Standard", "Standard rates ±15% · Desktop review recommended"
+        decision, desc = "Standard", "Standard rates ±15% · Underwriter review recommended"
     elif s_final < 80:
         decision, desc = "Rated", "15–50% surcharge · Senior UW manual review required before binding"
     else:
@@ -448,7 +447,7 @@ def score_policy(
     lr      = lr_map.get(decision)
     premium = round(loss_final / lr, -1) if lr else None
 
-    # ── Feature contributions ─────────────────────────────
+    # ── Feature contributions (score-point scale) ─────────────────────────────
     t1_contrib = {
         "Roof Vulnerability":   (0.027 * roof_age + 0.050 * mat_r) * scale,
         "Home Age / Structure": (0.012 * home_age + 0.045 * cnst_r) * scale,
@@ -1919,15 +1918,12 @@ if "Scorer" in section:
                 st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
                 st.markdown("##### Premium Build-Up")
                 lr_map2 = {"Preferred": 0.68, "Standard": 0.65, "Rated": 0.60}
-                load_map = {"Preferred": 1.25, "Standard": 1.55, "Rated": 2.00}
                 lr   = lr_map2.get(r["decision"], 0.65)
-                load = load_map.get(r["decision"], 1.55)
                 rows_prem = [
                     ("Pure Premium (E[Loss])", f"${r['loss_final']:,.0f}", "Calibrated expected annual loss from GLM-GAM model"),
-                    ("×Loss Load Factor", f"×{load:.2f}", f"Decision: {r['decision']} — covers adverse development & CAT loading"),
-                    ("Loaded Loss", f"${r['loss_final']*load:,.0f}", "Loss with CAT and development load"),
-                    ("÷Target Loss Ratio", f"{lr:.0%}", "Expense ratio: 30% (incl. commissions, admin, profit)"),
-                    ("Indicative Premium", f"${r['premium']:,.0f}", "Annual gross written premium estimate"),
+                    ("÷ Target Loss Ratio", f"{lr:.0%}", f"{r['decision']} tier — {lr:.0%} of premium allocated to losses"),
+                    ("= Expense & Profit Load", f"{1.0 - lr:.0%} of premium", "Covers commissions, admin, overhead & profit margin"),
+                    ("Indicative Premium", f"${round(r['loss_final'] / lr, -1):,.0f}", f"Annual GWP — ${r['loss_final']:,.0f} ÷ {lr:.0%} = ${round(r['loss_final'] / lr, -1):,.0f}"),
                 ]
                 for label, val, desc in rows_prem:
                     st.markdown(f"""
